@@ -1,3 +1,76 @@
+<script setup>
+import { ClipboardIcon } from '@heroicons/vue/24/outline';
+import BaseActionButton from 'src/components/base/base-action-button.vue';
+import BaseCard from 'src/components/base/base-card.vue';
+import BaseContainer from 'src/components/base/base-container.vue';
+import BaseInput from 'src/components/base/base-input.vue';
+import BaseSelect from 'src/components/base/base-select.vue';
+import { computed, ref } from 'vue';
+
+const url = ref(null);
+const method = ref('GET');
+
+const result = computed(() => {
+  return ['curl', '-X', method.value, url.value].join(' ');
+});
+const methodOptions = computed(() => [
+  { id: 'GET', name: 'GET' },
+  { id: 'POST', name: 'POST' },
+  { id: 'PATCH', name: 'PATCH' },
+  { id: 'DELETE', name: 'DELETE' },
+]);
+
+async function handleCopy() {
+  await navigator.clipboard.writeText(result.value);
+}
+</script>
+
 <template>
-  <div>Test</div>
+  <base-container>
+    <base-card title="Curl Command Generator" with-header custom-content>
+      <template #content="{ classes }">
+        <div class="grid grid-cols-2">
+          <div :class="[classes.content, 'flex gap-x-4']">
+            <base-select
+              label="Method"
+              :options="methodOptions"
+              :with-placeholder="false"
+              v-model="method"
+            />
+            <base-input
+              label="URL"
+              placeholder="https://example.com"
+              type="text"
+              fullwidth
+              v-model="url"
+            />
+          </div>
+          <div :class="[classes.content, 'border-l']">
+            <base-input
+              label="Result"
+              placeholder="Curl"
+              textarea
+              readonly
+              :classes="{
+                input: 'bg-gray-50 select-all',
+              }"
+              v-model="result"
+            >
+              <template #action>
+                <base-action-button v-on:click="handleCopy">
+                  <clipboard-icon class="w-4 h-4"></clipboard-icon>
+                </base-action-button>
+              </template>
+              <div
+                class="min-h-[60px] text-sm leading-6 bg-gray-50 select-all rounded-md shadow-sm ring-1 ring-inset px-2.5 py-1.5 text-gray-900 ring-gray-300"
+              >
+                {{ result }}
+              </div>
+            </base-input>
+          </div>
+          <div :class="['col-span-full border-t', classes.content]"></div>
+        </div>
+      </template>
+    </base-card>
+  </base-container>
 </template>

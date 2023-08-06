@@ -13,8 +13,6 @@ router.afterEach(() => {
 
 <template>
   <component :is="route.meta.layout">
-    <app-progress-bar />
-    <app-toast />
     <router-view :key="route.path" />
   </component>
 </template>
