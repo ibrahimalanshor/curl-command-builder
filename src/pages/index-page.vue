@@ -5,10 +5,12 @@ import BaseCard from 'src/components/base/base-card.vue';
 import BaseContainer from 'src/components/base/base-container.vue';
 import BaseInput from 'src/components/base/base-input.vue';
 import BaseSelect from 'src/components/base/base-select.vue';
-import { computed, ref } from 'vue';
+import BaseTab from 'src/components/base/base-tab.vue';
+import { computed, ref, h } from 'vue';
 
 const url = ref(null);
 const method = ref('GET');
+const tabActive = ref('Headers');
 
 const result = computed(() => {
   return ['curl', '-X', method.value, url.value].join(' ');
@@ -18,6 +20,26 @@ const methodOptions = computed(() => [
   { id: 'POST', name: 'POST' },
   { id: 'PATCH', name: 'PATCH' },
   { id: 'DELETE', name: 'DELETE' },
+]);
+const tabs = computed(() => [
+  {
+    id: 'Headers',
+    name: 'Headers',
+    render: () =>
+      h(BaseInput, { textarea: true, fullwidth: true, withLabel: false }),
+  },
+  {
+    id: 'Params',
+    name: 'Params',
+    render: () =>
+      h(BaseInput, { textarea: true, fullwidth: true, withLabel: false }),
+  },
+  {
+    id: 'Body',
+    name: 'Body',
+    render: () =>
+      h(BaseInput, { textarea: true, fullwidth: true, withLabel: false }),
+  },
 ]);
 
 async function handleCopy() {
@@ -29,21 +51,26 @@ async function handleCopy() {
   <base-container>
     <base-card title="Curl Command Generator" with-header custom-content>
       <template #content="{ classes }">
-        <div class="grid grid-cols-2">
-          <div :class="[classes.content, 'flex gap-x-4']">
-            <base-select
-              label="Method"
-              :options="methodOptions"
-              :with-placeholder="false"
-              v-model="method"
-            />
-            <base-input
-              label="URL"
-              placeholder="https://example.com"
-              type="text"
-              fullwidth
-              v-model="url"
-            />
+        <div class="grid grid-cols-1">
+          <div :class="[classes.content, 'space-y-4 border-b']">
+            <div :class="['flex gap-x-4']">
+              <base-select
+                label="Method"
+                :options="methodOptions"
+                :with-placeholder="false"
+                :with-label="false"
+                v-model="method"
+              />
+              <base-input
+                label="URL"
+                placeholder="https://example.com"
+                type="text"
+                fullwidth
+                :with-label="false"
+                v-model="url"
+              />
+            </div>
+            <base-tab :tabs="tabs" v-model="tabActive" />
           </div>
           <div :class="[classes.content, 'border-l']">
             <base-input
@@ -68,7 +95,6 @@ async function handleCopy() {
               </div>
             </base-input>
           </div>
-          <div :class="['col-span-full border-t', classes.content]"></div>
         </div>
       </template>
     </base-card>
