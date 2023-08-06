@@ -10,10 +10,21 @@ import { computed, ref, h } from 'vue';
 
 const url = ref(null);
 const method = ref('GET');
+const header = ref(null);
+const body = ref(null);
 const tabActive = ref('Headers');
 
 const result = computed(() => {
-  return ['curl', '-X', method.value, url.value].join(' ');
+  return [
+    'curl',
+    '-X',
+    method.value,
+    '-H',
+    header.value,
+    '-d',
+    body.value,
+    url.value,
+  ].join(' ');
 });
 const methodOptions = computed(() => [
   { id: 'GET', name: 'GET' },
@@ -26,13 +37,25 @@ const tabs = computed(() => [
     id: 'Headers',
     name: 'Headers',
     render: () =>
-      h(BaseInput, { textarea: true, fullwidth: true, withLabel: false }),
+      h(BaseInput, {
+        textarea: true,
+        fullwidth: true,
+        withLabel: false,
+        modelValue: header.value,
+        'onUpdate:modelValue': (value) => (header.value = value),
+      }),
   },
   {
     id: 'Params',
     name: 'Params',
     render: () =>
-      h(BaseInput, { textarea: true, fullwidth: true, withLabel: false }),
+      h(BaseInput, {
+        textarea: true,
+        fullwidth: true,
+        withLabel: false,
+        modelValue: body.value,
+        'onUpdate:modelValue': (value) => (body.value = value),
+      }),
   },
   {
     id: 'Body',
