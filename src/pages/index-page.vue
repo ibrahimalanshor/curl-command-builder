@@ -7,28 +7,24 @@ import BaseInput from 'src/components/base/base-input.vue';
 import BaseSelect from 'src/components/base/base-select.vue';
 import BaseTab from 'src/components/base/base-tab.vue';
 import { computed, ref, h } from 'vue';
+import { Curl } from 'src/helpers/curl';
 
 const url = ref(null);
 const method = ref('GET');
-const header = ref(null);
+const headers = ref(null);
 const params = ref(null);
 const body = ref(null);
 const tabActive = ref('Headers');
 
+const curl = new Curl();
+
 const result = computed(() => {
-  return [
-    `curl -X ${method.value} ${url.value ?? ''}${
-      params.value ? `?${params.value.split('\n').join('&')}` : ''
-    }`,
-    ...(header.value
-      ? [
-          `-H ${
-            header.value ? header.value.split('\n').join(' \\\n\t-H ') : ''
-          }`,
-        ]
-      : []),
-    ...(body.value ? [`-d '${body.value}'`] : []),
-  ].join(' \\\n\t');
+  return curl
+    .setUrl(url.value)
+    .setHeaders(headers.value)
+    .setParams(params.value)
+    .setBody(body.value)
+    .result();
 });
 const methodOptions = computed(() => [
   { id: 'GET', name: 'GET' },
@@ -46,8 +42,8 @@ const tabs = computed(() => [
         textarea: true,
         fullwidth: true,
         withLabel: false,
-        modelValue: header.value,
-        'onUpdate:modelValue': (value) => (header.value = value),
+        modelValue: headers.value,
+        'onUpdate:modelValue': (value) => (headers.value = value),
       }),
   },
   {
