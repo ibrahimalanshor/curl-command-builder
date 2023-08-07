@@ -11,12 +11,15 @@ import { computed, ref, h } from 'vue';
 const url = ref(null);
 const method = ref('GET');
 const header = ref(null);
+const params = ref(null);
 const body = ref(null);
 const tabActive = ref('Headers');
 
 const result = computed(() => {
   return [
-    `curl -X ${method.value} ${url.value ?? ''}`,
+    `curl -X ${method.value} ${url.value ?? ''}${
+      params.value ? `?${params.value.split('\n').join('&')}` : ''
+    }`,
     ...(header.value
       ? [
           `-H ${
@@ -38,6 +41,7 @@ const tabs = computed(() => [
     name: 'Headers',
     render: () =>
       h(BaseInput, {
+        placeholder: '"Content-Type: application/json"',
         textarea: true,
         fullwidth: true,
         withLabel: false,
@@ -50,11 +54,12 @@ const tabs = computed(() => [
     name: 'Params',
     render: () =>
       h(BaseInput, {
+        placeholder: 'search=value',
         textarea: true,
         fullwidth: true,
         withLabel: false,
-        modelValue: body.value,
-        'onUpdate:modelValue': (value) => (body.value = value),
+        modelValue: params.value,
+        'onUpdate:modelValue': (value) => (params.value = value),
       }),
   },
   {
