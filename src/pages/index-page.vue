@@ -27,6 +27,7 @@ const result = computed(() => {
           }`,
         ]
       : []),
+    ...(body.value ? [`-d '${body.value}'`] : []),
   ].join(' \\\n\t');
 });
 const methodOptions = computed(() => [
@@ -66,7 +67,14 @@ const tabs = computed(() => [
     id: 'Body',
     name: 'Body',
     render: () =>
-      h(BaseInput, { textarea: true, fullwidth: true, withLabel: false }),
+      h(BaseInput, {
+        placeholder: '{"key1":"value1", "key2":"value2"}',
+        textarea: true,
+        fullwidth: true,
+        withLabel: false,
+        modelValue: body.value,
+        'onUpdate:modelValue': (value) => (body.value = value),
+      }),
   },
 ]);
 
