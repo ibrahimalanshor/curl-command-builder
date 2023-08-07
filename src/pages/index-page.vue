@@ -16,15 +16,15 @@ const tabActive = ref('Headers');
 
 const result = computed(() => {
   return [
-    'curl',
-    '-X',
-    method.value,
-    '-H',
-    header.value,
-    '-d',
-    body.value,
-    url.value,
-  ].join(' ');
+    `curl -X ${method.value} ${url.value ?? ''}`,
+    ...(header.value
+      ? [
+          `-H ${
+            header.value ? header.value.split('\n').join(' \\\n\t-H ') : ''
+          }`,
+        ]
+      : []),
+  ].join(' \\\n\t');
 });
 const methodOptions = computed(() => [
   { id: 'GET', name: 'GET' },
@@ -112,7 +112,7 @@ async function handleCopy() {
                 </base-action-button>
               </template>
               <div
-                class="min-h-[60px] text-sm leading-6 bg-gray-50 select-all rounded-md shadow-sm ring-1 ring-inset px-2.5 py-1.5 text-gray-900 ring-gray-300"
+                class="min-h-[fit] whitespace-pre text-sm leading-6 bg-gray-50 select-all rounded-md shadow-sm ring-1 ring-inset px-2.5 py-1.5 text-gray-900 ring-gray-300"
               >
                 {{ result }}
               </div>
