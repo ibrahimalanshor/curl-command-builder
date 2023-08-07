@@ -24,6 +24,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
   size: {
     type: String,
     default: 'md',
@@ -43,7 +47,7 @@ const props = defineProps({
 const text = computed(() => {
   return props.textFromResource ? getString(props.text) : props.text;
 });
-const isDisabled = computed(() => props.loading);
+const isDisabled = computed(() => props.disabled || props.loading);
 const style = computed(() => {
   const sizes = {
     xs: 'px-1.5 py-0.5 text-xs rounded',
