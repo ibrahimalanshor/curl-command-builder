@@ -1,8 +1,8 @@
 <script setup>
 import { ClipboardIcon } from '@heroicons/vue/24/outline';
 import BaseActionButton from 'src/components/base/base-action-button.vue';
-import BaseButton from 'src/components/base/base-button.vue';
 import BaseCard from 'src/components/base/base-card.vue';
+import BaseCheckbox from 'src/components/base/base-checkbox.vue';
 import BaseContainer from 'src/components/base/base-container.vue';
 import BaseInput from 'src/components/base/base-input.vue';
 import BaseSelect from 'src/components/base/base-select.vue';
@@ -17,6 +17,11 @@ const curlOptions = reactive({
   params: null,
   body: null,
   output: null,
+  options: {
+    verbose: false,
+    compressed: false,
+    headerOnly: false,
+  },
 });
 const tabActive = ref('Headers');
 const curl = ref(new Curl());
@@ -83,6 +88,37 @@ const tabs = computed(() => [
         'onUpdate:modelValue': (value) => (curlOptions.output = value),
       }),
   },
+  {
+    id: 'Options',
+    name: 'Options',
+    render: () =>
+      h(
+        'div',
+        { class: 'flex flex-col gap-4' },
+        {
+          default: () => [
+            h(BaseCheckbox, {
+              text: 'Verbose (-v)',
+              modelValue: curlOptions.options.verbose,
+              'onUpdate:modelValue': (value) =>
+                (curlOptions.options.verbose = value),
+            }),
+            h(BaseCheckbox, {
+              text: 'Compressed (--compressed)',
+              modelValue: curlOptions.options.compressed,
+              'onUpdate:modelValue': (value) =>
+                (curlOptions.options.compressed = value),
+            }),
+            h(BaseCheckbox, {
+              text: 'Header Only (-I)',
+              modelValue: curlOptions.options.headerOnly,
+              'onUpdate:modelValue': (value) =>
+                (curlOptions.options.headerOnly = value),
+            }),
+          ],
+        }
+      ),
+  },
 ]);
 
 async function handleCopy() {
@@ -96,7 +132,8 @@ watch(curlOptions, () => {
     .setHeaders(curlOptions.headers)
     .setParams(curlOptions.params)
     .setBody(curlOptions.body)
-    .setOutput(curlOptions.output);
+    .setOutput(curlOptions.output)
+    .setOptions(curlOptions.options);
 });
 </script>
 

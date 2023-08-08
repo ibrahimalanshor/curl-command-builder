@@ -7,6 +7,11 @@ export class Curl {
   headers;
   body;
   output;
+  options = {
+    verbose: false,
+    headerOnly: false,
+    compressed: false,
+  };
 
   setUrl(url) {
     this.url = url;
@@ -38,6 +43,17 @@ export class Curl {
 
     return this;
   }
+  setOptions(options) {
+    this.options = options;
+
+    return this;
+  }
+
+  getCommand() {
+    return [`curl`, ...(this.hasOptions() ? [this.getOptions()] : [])].join(
+      ' '
+    );
+  }
 
   getUrl() {
     const url = this.url ?? '';
@@ -65,9 +81,21 @@ export class Curl {
     return `-o '${this.output}'`;
   }
 
+  getOptions() {
+    return `-${this.options.verbose ? 'v' : ''}${
+      this.options.headerOnly ? 'I' : ''
+    }${this.options.compressed ? ' --compressed' : ''}`;
+  }
+
+  hasOptions() {
+    return (
+      this.options.verbose || this.options.headerOnly || this.options.compressed
+    );
+  }
+
   result() {
     return [
-      `curl -X ${this.method} ${this.getUrl()}`,
+      `${this.getCommand()} -X ${this.method} ${this.getUrl()}`,
       ...(this.params ? [this.getParams()] : []),
       ...(this.headers ? [this.getHeaders()] : []),
       ...(this.body ? [this.getBody()] : []),
