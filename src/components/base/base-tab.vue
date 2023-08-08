@@ -24,6 +24,15 @@ const active = computed({
 const activeTab = computed(() =>
   props.tabs.find((tab) => tab.id === active.value)
 );
+const style = computed(() => {
+  return {
+    button: {
+      base: 'rounded-md px-3 py-2 text-sm font-medium flex items-center gap-x-2',
+      active: 'bg-indigo-100 text-indigo-700',
+      inactive: 'text-gray-500 hover:text-gray-700',
+    },
+  };
+});
 
 function handleClickItem(item) {
   active.value = item.id;
@@ -47,20 +56,34 @@ function handleClickItem(item) {
     </div>
     <div class="hidden sm:block">
       <nav class="flex space-x-4" aria-label="Tabs">
-        <a
-          v-for="tab in tabs"
-          :key="tab.id"
-          href="#"
-          :class="[
-            active === tab.id
-              ? 'bg-indigo-100 text-indigo-700'
-              : 'text-gray-500 hover:text-gray-700',
-            'rounded-md px-3 py-2 text-sm font-medium',
-          ]"
-          :aria-current="tab.id === active ? 'page' : undefined"
-          v-on:click="handleClickItem(tab)"
-          >{{ tab.name }}</a
-        >
+        <template v-for="tab in tabs" :key="tab.id">
+          <slot
+            name="button"
+            :tab="tab"
+            :is-active="tab.id === active"
+            :classes="style"
+            :handle-click="() => handleClickItem(tab)"
+          >
+            <a
+              href="#"
+              :class="[
+                active === tab.id ? style.button.active : style.button.inactive,
+                style.button.base,
+              ]"
+              :aria-current="tab.id === active ? 'page' : undefined"
+              v-on:click="handleClickItem(tab)"
+            >
+              {{ tab.name }}
+              <svg
+                class="h-1.5 w-1.5 fill-indigo-500"
+                viewBox="0 0 6 6"
+                aria-hidden="true"
+              >
+                <circle cx="3" cy="3" r="3" />
+              </svg>
+            </a>
+          </slot>
+        </template>
       </nav>
     </div>
     <component :is="activeTab.render" />

@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 export class Curl {
   url;
   method = 'GET';

@@ -1,6 +1,7 @@
 <script setup>
 import { ClipboardIcon } from '@heroicons/vue/24/outline';
 import BaseActionButton from 'src/components/base/base-action-button.vue';
+import BaseButton from 'src/components/base/base-button.vue';
 import BaseCard from 'src/components/base/base-card.vue';
 import BaseCheckbox from 'src/components/base/base-checkbox.vue';
 import BaseContainer from 'src/components/base/base-container.vue';
@@ -39,6 +40,7 @@ const tabs = computed(() => [
   {
     id: 'Headers',
     name: 'Headers',
+    fillCheck: () => !!curlOptions.headers,
     render: () =>
       h(BaseInput, {
         placeholder: '"Content-Type: application/json"',
@@ -52,6 +54,7 @@ const tabs = computed(() => [
   {
     id: 'Params',
     name: 'Params',
+    fillCheck: () => !!curlOptions.params,
     render: () =>
       h(BaseInput, {
         placeholder: 'search=value',
@@ -65,6 +68,7 @@ const tabs = computed(() => [
   {
     id: 'Body',
     name: 'Body',
+    fillCheck: () => !!curlOptions.body,
     render: () =>
       h(BaseInput, {
         placeholder: '{"key1":"value1", "key2":"value2"}',
@@ -78,6 +82,7 @@ const tabs = computed(() => [
   {
     id: 'Output',
     name: 'Output',
+    fillCheck: () => !!curlOptions.output,
     render: () =>
       h(BaseInput, {
         type: 'text',
@@ -91,6 +96,11 @@ const tabs = computed(() => [
   {
     id: 'Options',
     name: 'Options',
+    fillCheck: () =>
+      Object.values(curlOptions.options).reduce(
+        (prev, current) => (prev += current),
+        0
+      ),
     render: () =>
       h(
         'div',
@@ -104,22 +114,30 @@ const tabs = computed(() => [
                 (curlOptions.options.verbose = value),
             }),
             h(BaseCheckbox, {
-              text: 'Compressed (--compressed)',
-              modelValue: curlOptions.options.compressed,
-              'onUpdate:modelValue': (value) =>
-                (curlOptions.options.compressed = value),
-            }),
-            h(BaseCheckbox, {
               text: 'Header Only (-I)',
               modelValue: curlOptions.options.headerOnly,
               'onUpdate:modelValue': (value) =>
                 (curlOptions.options.headerOnly = value),
+            }),
+            h(BaseCheckbox, {
+              text: 'Compressed (--compressed)',
+              modelValue: curlOptions.options.compressed,
+              'onUpdate:modelValue': (value) =>
+                (curlOptions.options.compressed = value),
             }),
           ],
         }
       ),
   },
 ]);
+
+function isTabFilled(tab) {
+  if (!tab.fillCheck) {
+    return false;
+  }
+
+  return tab.fillCheck();
+}
 
 async function handleCopy() {
   await navigator.clipboard.writeText(curlResult.value);
@@ -160,7 +178,27 @@ watch(curlOptions, () => {
                 v-model="curlOptions.url"
               />
             </div>
-            <base-tab :tabs="tabs" v-model="tabActive" />
+            <base-tab :tabs="tabs" v-model="tabActive">
+              <template #button="{ tab, classes, isActive, handleClick }">
+                <button
+                  :class="[
+                    classes.button.base,
+                    isActive ? classes.button.active : classes.button.inactive,
+                  ]"
+                  v-on:click="handleClick"
+                >
+                  {{ tab.name }}
+                  <svg
+                    v-if="isTabFilled(tab)"
+                    class="h-1.5 w-1.5 fill-indigo-500"
+                    viewBox="0 0 6 6"
+                    aria-hidden="true"
+                  >
+                    <circle cx="3" cy="3" r="3" />
+                  </svg>
+                </button>
+              </template>
+            </base-tab>
           </div>
           <div :class="[classes.content, 'border-t']">
             <base-input
