@@ -16,10 +16,10 @@ const curlOptions = reactive({
   headers: null,
   params: null,
   body: null,
+  output: null,
 });
 const tabActive = ref('Headers');
 const curl = ref(new Curl());
-const testResult = ref(null);
 
 const curlResult = computed(() => {
   return curl.value.result();
@@ -70,17 +70,23 @@ const tabs = computed(() => [
         'onUpdate:modelValue': (value) => (curlOptions.body = value),
       }),
   },
+  {
+    id: 'Output',
+    name: 'Output',
+    render: () =>
+      h(BaseInput, {
+        type: 'text',
+        placeholder: 'file.txt',
+        fullwidth: true,
+        withLabel: false,
+        modelValue: curlOptions.output,
+        'onUpdate:modelValue': (value) => (curlOptions.output = value),
+      }),
+  },
 ]);
 
 async function handleCopy() {
   await navigator.clipboard.writeText(curlResult.value);
-}
-async function handleTest() {
-  try {
-    testResult.value = (await curl.value.test()).data;
-  } catch (err) {
-    testResult.value = err.response.data;
-  }
 }
 
 watch(curlOptions, () => {
@@ -89,23 +95,14 @@ watch(curlOptions, () => {
     .setMethod(curlOptions.method)
     .setHeaders(curlOptions.headers)
     .setParams(curlOptions.params)
-    .setBody(curlOptions.body);
+    .setBody(curlOptions.body)
+    .setOutput(curlOptions.output);
 });
 </script>
 
 <template>
   <base-container>
     <base-card title="Curl Command Generator" with-header custom-content>
-      <template #header-actions>
-        <base-button
-          size="sm"
-          color="indigo"
-          :disabled="!curlOptions.url"
-          v-on:click="handleTest"
-          >Test</base-button
-        >
-      </template>
-
       <template #content="{ classes }">
         <div class="grid grid-cols-1">
           <div :class="[classes.content, 'space-y-4']">
@@ -147,28 +144,6 @@ watch(curlOptions, () => {
                 class="min-h-[fit] whitespace-pre text-sm leading-6 bg-gray-50 select-all rounded-md shadow-sm ring-1 ring-inset px-2.5 py-1.5 text-gray-900 ring-gray-300"
               >
                 {{ curlResult }}
-              </div>
-            </base-input>
-          </div>
-          <div v-if="testResult" :class="[classes.content, 'border-t']">
-            <base-input
-              label="Test Result"
-              placeholder="Test Result"
-              textarea
-              readonly
-              :classes="{
-                input: 'bg-gray-50 select-all',
-              }"
-            >
-              <template #action>
-                <base-action-button v-on:click="handleCopy">
-                  <clipboard-icon class="w-4 h-4"></clipboard-icon>
-                </base-action-button>
-              </template>
-              <div
-                class="min-h-[fit] whitespace-pre text-sm leading-6 bg-gray-50 select-all rounded-md shadow-sm ring-1 ring-inset px-2.5 py-1.5 text-gray-900 ring-gray-300"
-              >
-                {{ testResult }}
               </div>
             </base-input>
           </div>

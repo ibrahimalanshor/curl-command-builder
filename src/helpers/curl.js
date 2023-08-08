@@ -6,6 +6,7 @@ export class Curl {
   params;
   headers;
   body;
+  output;
 
   setUrl(url) {
     this.url = url;
@@ -32,6 +33,11 @@ export class Curl {
 
     return this;
   }
+  setOutput(output) {
+    this.output = output;
+
+    return this;
+  }
 
   getUrl() {
     const url = this.url ?? '';
@@ -53,32 +59,16 @@ export class Curl {
     return `-d '${this.body}'`;
   }
 
+  getOutput() {
+    return `-o '${this.output}'`;
+  }
+
   result() {
     return [
       `curl -X ${this.method} ${this.getUrl()}`,
       ...(this.headers ? [this.getHeaders()] : []),
       ...(this.body ? [this.getBody()] : []),
+      ...(this.output ? [this.getOutput()] : []),
     ].join(' \\\n\t');
-  }
-
-  async test() {
-    const params = this.params
-      ? Object.fromEntries(
-          this.params.split('\n').map((item) => item.split('='))
-        )
-      : {};
-    const headers = this.headers
-      ? Object.fromEntries(
-          this.headers
-            .split('\n')
-            .map((item) => item.slice(1, item.length - 1).split(': '))
-        )
-      : {};
-
-    return await axios[this.method.toLowerCase()](this.url, {
-      headers,
-      params,
-      data: this.body,
-    });
   }
 }
