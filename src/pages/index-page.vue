@@ -142,6 +142,17 @@ function isTabFilled(tab) {
 async function handleCopy() {
   await navigator.clipboard.writeText(curlResult.value);
 }
+function handleReset() {
+  curlOptions.url = null;
+  curlOptions.method = 'GET';
+  curlOptions.headers = null;
+  curlOptions.params = null;
+  curlOptions.body = null;
+  curlOptions.output = null;
+  curlOptions.options.verbose = false;
+  curlOptions.options.headerOnly = false;
+  curlOptions.options.compressed = false;
+}
 
 watch(curlOptions, () => {
   curl.value
@@ -158,6 +169,11 @@ watch(curlOptions, () => {
 <template>
   <base-container>
     <base-card title="Curl Command Generator" with-header custom-content>
+      <template #header-actions>
+        <base-button size="sm" color="indigo" v-on:click="handleReset"
+          >Reset</base-button
+        >
+      </template>
       <template #content="{ classes }">
         <div class="grid grid-cols-1">
           <div :class="[classes.content, 'space-y-4']">
