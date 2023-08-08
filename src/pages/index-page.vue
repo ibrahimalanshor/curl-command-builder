@@ -108,7 +108,7 @@ watch(curlOptions, () => {
 
       <template #content="{ classes }">
         <div class="grid grid-cols-1">
-          <div :class="[classes.content, 'space-y-4 border-b']">
+          <div :class="[classes.content, 'space-y-4']">
             <div :class="['flex gap-x-4']">
               <base-select
                 label="Method"
@@ -128,10 +128,10 @@ watch(curlOptions, () => {
             </div>
             <base-tab :tabs="tabs" v-model="tabActive" />
           </div>
-          <div :class="[classes.content, 'border-b']">
+          <div :class="[classes.content, 'border-t']">
             <base-input
-              label="Result"
-              placeholder="Curl"
+              label="Curl Result"
+              placeholder="Curl Result"
               textarea
               readonly
               :classes="{
@@ -150,7 +150,7 @@ watch(curlOptions, () => {
               </div>
             </base-input>
           </div>
-          <div :class="[classes.content]">
+          <div v-if="testResult" :class="[classes.content, 'border-t']">
             <base-input
               label="Test Result"
               placeholder="Test Result"
