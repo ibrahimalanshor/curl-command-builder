@@ -42,11 +42,13 @@ export class Curl {
   getUrl() {
     const url = this.url ?? '';
 
-    return `${url}${this.getParams()}`;
+    return url;
   }
 
   getParams() {
-    return this.params ? `?${this.params.split('\n').join('&')}` : '';
+    const params = this.params.split('\n').join(' \\\n\t--url-query ');
+
+    return `--url-query ${params}`;
   }
 
   getHeaders() {
@@ -66,6 +68,7 @@ export class Curl {
   result() {
     return [
       `curl -X ${this.method} ${this.getUrl()}`,
+      ...(this.params ? [this.getParams()] : []),
       ...(this.headers ? [this.getHeaders()] : []),
       ...(this.body ? [this.getBody()] : []),
       ...(this.output ? [this.getOutput()] : []),
