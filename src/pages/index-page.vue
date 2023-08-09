@@ -227,7 +227,7 @@ watch(curlOptions, () => {
               }"
             >
               <template #action>
-                <base-action-button v-on:click="handleCopy">
+                <base-action-button class="relative" v-on:click="handleCopy">
                   <clipboard-icon class="w-4 h-4"></clipboard-icon>
                 </base-action-button>
               </template>

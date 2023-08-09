@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import BaseSelect from 'src/components/base/base-select.vue';
 
 const props = defineProps({
   tabs: {
@@ -44,15 +45,13 @@ function handleClickItem(item) {
     <div class="sm:hidden">
       <label for="tabs" class="sr-only">Select a tab</label>
       <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
-      <select
-        id="tabs"
-        name="tabs"
-        class="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-      >
-        <option v-for="tab in tabs" :key="tab.name" :selected="tab.current">
-          {{ tab.name }}
-        </option>
-      </select>
+      <base-select
+        :options="tabs"
+        fullwidth
+        :with-label="false"
+        :with-placeholder="false"
+        v-model="active"
+      />
     </div>
     <div class="hidden sm:block">
       <nav class="flex space-x-4" aria-label="Tabs">
