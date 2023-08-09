@@ -1,5 +1,6 @@
 <script setup>
 import { ClipboardIcon } from '@heroicons/vue/24/outline';
+import GithubIcon from 'src/assets/github.svg';
 import BaseActionButton from 'src/components/base/base-action-button.vue';
 import BaseButton from 'src/components/base/base-button.vue';
 import BaseCard from 'src/components/base/base-card.vue';
@@ -168,6 +169,14 @@ watch(curlOptions, () => {
 
 <template>
   <base-container>
+    <div class="flex justify-end mb-4">
+      <a
+        href="https://github.com/ibrahimalanshor/curl-command-builder"
+        target="_blank"
+      >
+        <img :src="GithubIcon" alt="Github" class="w-4 h-4" />
+      </a>
+    </div>
     <base-card title="Curl Command Generator" with-header custom-content>
       <template #header-actions>
         <base-button size="sm" color="indigo" v-on:click="handleReset"
