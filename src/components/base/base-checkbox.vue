@@ -1,22 +1,13 @@
 <script setup>
 import { computed } from 'vue';
-import { getString } from 'src/utils/resource';
 
 const props = defineProps({
   text: {
     type: String,
     default: null,
   },
-  textFromResource: {
-    type: Boolean,
-    default: false,
-  },
   modelValue: {
     type: [Boolean, Array],
-    default: null,
-  },
-  value: {
-    type: null,
     default: null,
   },
 });
@@ -29,9 +20,6 @@ const checked = computed({
   set(value) {
     emit('update:modelValue', value);
   },
-});
-const text = computed(() => {
-  return props.textFromResource ? getString(props.text) : props.text;
 });
 
 function handleChange() {

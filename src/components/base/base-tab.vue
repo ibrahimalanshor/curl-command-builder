@@ -43,15 +43,7 @@ function handleClickItem(item) {
 <template>
   <div class="space-y-4">
     <div class="sm:hidden">
-      <label for="tabs" class="sr-only">Select a tab</label>
-      <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
-      <base-select
-        :options="tabs"
-        fullwidth
-        :with-label="false"
-        :with-placeholder="false"
-        v-model="active"
-      />
+      <base-select :options="tabs" fullwidth v-model="active" />
     </div>
     <div class="hidden sm:block">
       <nav class="flex space-x-4" aria-label="Tabs">
