@@ -177,7 +177,7 @@ watch(curlOptions, () => {
         <img :src="GithubIcon" alt="Github" class="w-4 h-4" />
       </a>
     </div>
-    <base-card title="Curl Command Generator" with-header custom-content>
+    <base-card title="Curl Command Builder" with-header custom-content>
       <template #action>
         <base-button size="sm" color="indigo" v-on:click="handleReset"
           >Reset</base-button
