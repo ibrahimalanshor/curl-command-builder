@@ -1,4 +1,4 @@
-# Curl Command Generator
+# Curl Command Builder
 
 Built with Vue 3 and Tailwind Css.
 
